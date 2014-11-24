@@ -205,16 +205,16 @@ class Escpos(object):
 
     def barcode(self, code, bc, width, height, pos, font):
         """ Print Barcode """
-        # Align Bar Code()
-        self._raw(TXT_ALIGN_CT)
         # Height
         if height >=2 or height <=6:
             self._raw(BARCODE_HEIGHT)
+            self._raw(str(height))
         else:
             raise BarcodeSizeError()
         # Width
         if width >= 1 or width <=255:
             self._raw(BARCODE_WIDTH)
+            self._raw(str(width))
         else:
             raise BarcodeSizeError()
         # Font
@@ -250,7 +250,13 @@ class Escpos(object):
             raise BarcodeTypeError()
         # Print Code
         if code:
-            self._raw(code)
+            if bc.upper() == "CODE39":
+                self._raw('*')
+                self._raw(code)
+                self._raw('*')
+            else:
+                self._raw(code)
+            self.set(align='left')
         else:
             raise exception.BarcodeCodeError()
 
